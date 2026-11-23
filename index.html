@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Butterfly Party — Photo Hunt by PlayVibe</title>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --card: #141824;
+      --border: #262d42;
+      --gold: #f5c96b;
+      --accent: #4dd0e1;
+      --pink: #f06292;
+      --text: #eef1f8;
+      --muted: #98a2bd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.55; }
+    header {
+      background: linear-gradient(135deg, #161b2e 0%, #0d101b 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 16px;
+      text-align: center;
+    }
+    header h1 { color: var(--gold); font-size: 2rem; letter-spacing: 1px; }
+    header p { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+    nav {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      margin-top: 18px;
+    }
+    nav button {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600;
+      transition: 0.2s;
+    }
+    nav button:hover, nav button.active { border-color: var(--gold); color: var(--gold); }
+    main { max-width: 1100px; margin: 24px auto; padding: 0 16px 60px; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px;
+    }
+    .card h2, .card h3 { color: var(--gold); margin-bottom: 10px; font-size: 1.15rem; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 0.8rem; font-weight: 700; background: #1f273d; color: var(--accent);
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.92rem; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    .btn-tp {
+      background: linear-gradient(90deg, #e0aa3e, #f5c96b); color: #111;
+      text-decoration: none; padding: 5px 12px; border-radius: 8px;
+      font-weight: 700; font-size: 0.82rem; display: inline-block;
+    }
+    input, select {
+      background: #0d101a; border: 1px solid var(--border); color: var(--text);
+      padding: 9px 12px; border-radius: 8px; margin-right: 8px; margin-bottom: 8px;
+    }
+    .btn-primary {
+      background: var(--accent); color: #091018; border: none; padding: 9px 16px;
+      border-radius: 8px; font-weight: 700; cursor: pointer;
+    }
+    .alert-box {
+      background: rgba(240, 98, 146, 0.12); border: 1px solid var(--pink);
+      padding: 12px; border-radius: 10px; margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <img src="logo2.png" alt="Butterfly Party" style="max-width:340px; width:90%; height:auto; border-radius:12px;" />
+
+  <p>Photo Hunt by PlayVibe • Collect, Explore &amp; Win Linden Dollars in Second Life</p>
+  <nav>
+    <button class="active" onclick="showTab('home', this)">Live Gardens &amp; Daily</button>
+    <button onclick="showTab('ranks', this)">Leaderboards &amp; Olympics</button>
+    <button onclick="showTab('rules', this)">How to Play</button>
+    <button onclick="showTab('admin', this)">Admin Area</button>
+  </nav>
+</header>
+
+<main>
+  <!-- TAB 1: LIVE GARDENS & DAILY -->
+  <section id="tab-home" class="tab active">
+    <div class="grid">
+      <div class="card">
+        <h2>✨ Butterfly of the Day</h2>
+        <p id="botd-name" style="font-size:1.3rem; font-weight:700; color:#4dd0e1;">Loading...</p>
+        <p style="color:var(--muted); font-size:0.9rem; margin-top:6px;">
+          Snap this species today to earn <strong>+5 Bonus Loyalty Points</strong> for the Monthly Olympics!
+        </p>
+      </div>
+      <div class="card">
+        <h2>🎯 Daily Missions (Free Nectar!)</h2>
+        <ul style="padding-left:18px; color:var(--muted); font-size:0.92rem;">
+          <li><strong>15 Catches today:</strong> +5 Wildflower Nectar</li>
+          <li><strong>Visit 2 Gardens today:</strong> +3 Blossom Nectar</li>
+          <li><strong>1 Rare Butterfly today:</strong> +2 Ambrosia Nectar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🌸 Active Gardens &amp; Clubs (Click to Teleport)</h2>
+      <table>
+        <thead>
+          <tr><th>Garden / Club</th><th>Multiplier</th><th>Weekly Visits</th><th>Teleport</th></tr>
+        </thead>
+        <tbody id="gardens-table">
+          <tr><td colspan="4">Loading active gardens...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TAB 2: LEADERBOARDS -->
+  <section id="tab-ranks" class="tab">
+    <div class="grid">
+      <div class="card">
+        <h2>📖 Weekly Album Contest (8/8 Species)</h2>
+        <p style="color:var(--muted); font-size:0.88rem; margin-bottom:8px;">
+          Complete full 8/8 sets to climb the weekly podium!
+        </p>
+        <table>
+          <thead><tr><th>#</th><th>Photographer</th><th>Full Albums</th><th>Catches</th></tr></thead>
+          <tbody id="weekly-table"><tr><td colspan="4">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>🏅 Monthly Butterfly Olympics</h2>
+        <p style="color:var(--muted); font-size:0.88rem; margin-bottom:8px;">
+          100% Loyalty &amp; Consistency (Super Catches = 0 pts).
+        </p>
+        <table>
+          <thead><tr><th>#</th><th>Photographer</th><th>Loyalty Pts</th><th>Total</th></tr></thead>
+          <tbody id="monthly-table"><tr><td colspan="4">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- TAB 3: HOW TO PLAY -->
+  <section id="tab-rules" class="tab">
+    <div class="grid">
+      <div class="card">
+        <h3>1. Wear the HUD &amp; Visit Gardens</h3>
+        <p style="color:var(--muted); font-size:0.92rem;">
+          Wear your <strong>Butterfly Party HUD</strong> (no held objects, dance freely in clubs!). When the LED turns <strong>Green</strong>, you are inside an active Emitter range.
+        </p>
+      </div>
+      <div class="card">
+        <h3>2. Choose Your Nectar</h3>
+        <p style="color:var(--muted); font-size:0.92rem;">
+          <strong>No Nectar (Free):</strong> 180s timer (White bar)<br>
+          <strong>Wildflower (Lv.1):</strong> 60s timer (Green bar)<br>
+          <strong>Blossom (Lv.2):</strong> 45s timer (Gold bar)<br>
+          <strong>Ambrosia (Lv.3):</strong> 30s timer (Pink bar) + higher Super Catch odds!
+        </p>
+      </div>
+      <div class="card">
+        <h3>3. Daily Limits &amp; Super Catches</h3>
+        <p style="color:var(--muted); font-size:0.92rem;">
+          Up to <strong>40 catches/day</strong> per garden and <strong>160/day</strong> total. Using Nectar unlocks rare Super Catches worth <strong>20 L$, 60 L$, or 100 L$</strong> (0 contest points).
+        </p>
+      </div>
+      <div class="card">
+        <h3>4. Monthly Olympics Scoring</h3>
+        <p style="color:var(--muted); font-size:0.92rem;">
+          • <strong>+1 pt</strong> per snap<br>
+          • <strong>+20 pts</strong> per new garden visited<br>
+          • <strong>+20 pts</strong> on days with 40+ catches<br>
+          • <strong>+100 pts</strong> per full 8/8 Album completed
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: ADMIN AREA -->
+  <section id="tab-admin" class="tab">
+    <div id="admin-login-box" class="card" style="max-width:440px; margin:0 auto;">
+      <h2>🔐 Staff &amp; Admin Login</h2>
+      <p style="color:var(--muted); font-size:0.88rem; margin-bottom:12px;">
+        First-time setup: sign in as <strong>PlayVibe</strong> with your chosen password to initialize SuperAdmin access.
+      </p>
+      <input type="text" id="adm-user" placeholder="Username (e.g. PlayVibe)" style="width:100%;" />
+      <input type="password" id="adm-pass" placeholder="Password" style="width:100%;" />
+      <button class="btn-primary" onclick="adminLogin()" style="width:100%; margin-top:6px;">Sign In</button>
+      <p id="adm-err" style="color:var(--pink); margin-top:8px; font-size:0.88rem;"></p>
+    </div>
+
+    <div id="admin-panel" style="display:none;">
+      <div class="card">
+        <h2>⚠️ Shared IP Matches (Multi-Account Monitor)</h2>
+        <div id="shared-ips-list"><p style="color:var(--muted);">No shared IPs detected yet.</p></div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>👥 Add Staff / Admin Account</h2>
+          <input type="text" id="new-adm-user" placeholder="New Username" />
+          <input type="password" id="new-adm-pass" placeholder="New Password" />
+          <select id="new-adm-role">
+            <option value="ADMIN">ADMIN (Full Access)</option>
+            <option value="MOD">MOD (Support Only)</option>
+          </select>
+          <button class="btn-primary" onclick="addAdminUser()">Create Account</button>
+          <p id="add-adm-msg" style="color:var(--accent); font-size:0.88rem; margin-top:6px;"></p>
+          <div id="admins-list" style="margin-top:12px; font-size:0.88rem; color:var(--muted);"></div>
+        </div>
+
+        <div class="card">
+          <h2>🌸 Active Emitters Overview</h2>
+          <div id="adm-gardens-list" style="font-size:0.88rem;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🦋 Top Players (Real Names &amp; Balances)</h2>
+        <table>
+          <thead><tr><th>SL Name</th><th>Balance (L$)</th><th>Total Catches</th><th>Loyalty Pts</th><th>Privacy</th></tr></thead>
+          <tbody id="adm-players-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  const API_URL = "https://butterfly-api.danielle-astonia.workers.dev";
+  let currentAdminUser = "";
+  let currentAdminPass = "";
+
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  async function loadPublicData() {
+    const params = new URLSearchParams(window.location.search);
+    const u = params.get('u') || '';
+    try {
+      const res = await fetch(`${API_URL}/api/public${u ? '?u=' + encodeURIComponent(u) : ''}`);
+      const data = await res.json();
+      if (!data.ok) return;
+
+      document.getElementById('botd-name').textContent = data.butterfly_of_the_day.name;
+
+      const gBody = document.getElementById('gardens-table');
+      if (!data.gardens.length) {
+        gBody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);">No active gardens online right now.</td></tr>';
+      } else {
+        gBody.innerHTML = data.gardens.map(g => {
+          const coords = (g.pos || '128,128,25').split(',').map(n => Math.round(Number(n) || 128));
+          const slurl = `secondlife://${encodeURIComponent(g.region || '')}/${coords[0]}/${coords[1]}/${coords[2]}`;
+          return `<tr>
+            <td><strong>${g.garden_name || 'Butterfly Garden'}</strong><br><small style="color:var(--muted);">${g.region || ''}</small></td>
+            <td><span class="badge">${g.multiplier || 1}x</span></td>
+            <td>${g.weekly_visits || 0}</td>
+            <td><a class="btn-tp" href="${slurl}">Teleport</a></td>
+          </tr>`;
+        }).join('');
+      }
+
+      const wBody = document.getElementById('weekly-table');
+      wBody.innerHTML = data.weekly_leaderboard.length
+        ? data.weekly_leaderboard.map((p, i) => `<tr><td>${i + 1}</td><td>${p.display_name}</td><td><strong>${p.weekly_albums}</strong></td><td>${p.weekly_catches}</td></tr>`).join('')
+        : '<tr><td colspan="4" style="color:var(--muted);">No entries yet this week.</td></tr>';
+
+      const mBody = document.getElementById('monthly-table');
+      mBody.innerHTML = data.monthly_olympics.length
+        ? data.monthly_olympics.map((p, i) => `<tr><td>${i + 1}</td><td>${p.display_name}</td><td><strong>${p.monthly_points}</strong></td><td>${p.total_caught}</td></tr>`).join('')
+        : '<tr><td colspan="4" style="color:var(--muted);">No entries yet this month.</td></tr>';
+    } catch (e) {
+      document.getElementById('botd-name').textContent = 'Connection error (check API_URL)';
+    }
+  }
+
+  async function adminLogin() {
+    const username = document.getElementById('adm-user').value.trim();
+    const password = document.getElementById('adm-pass').value;
+    const errEl = document.getElementById('adm-err');
+    errEl.textContent = '';
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'admin_login', username, password })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      errEl.textContent = 'Invalid credentials.';
+      return;
+    }
+
+    currentAdminUser = username;
+    currentAdminPass = password;
+    document.getElementById('admin-login-box').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+
+    const ipDiv = document.getElementById('shared-ips-list');
+    if (data.shared_ips && data.shared_ips.length) {
+      ipDiv.innerHTML = data.shared_ips.map(g =>
+        `<div class="alert-box"><strong>IP Group #${g.ip_id} (${g.count} accounts):</strong> ${g.accounts.map(a => a.name).join(', ')}</div>`
+      ).join('');
+    } else {
+      ipDiv.innerHTML = '<p style="color:var(--muted);">No shared IP groups detected yet.</p>';
+    }
+
+    document.getElementById('admins-list').innerHTML = '<strong>Active Staff:</strong> ' +
+      (data.admins || []).map(a => `${a.username} (${a.role})`).join(' • ');
+
+    document.getElementById('adm-gardens-list').innerHTML = (data.gardens || []).map(g =>
+      `<div style="margin-bottom:6px;"><strong>${g.garden_name}</strong> (${g.region}) — ${g.multiplier}x • Budget: L$ ${g.budget}</div>`
+    ).join('') || 'No emitters registered.';
+
+    document.getElementById('adm-players-table').innerHTML = (data.players || []).map(p =>
+      `<tr><td>${p.name}</td><td>L$ ${p.balance}</td><td>${p.total_caught}</td><td>${p.monthly_points}</td><td>${p.hide_name ? 'Hidden' : 'Public'}</td></tr>`
+    ).join('');
+  }
+
+  async function addAdminUser() {
+    const new_user = document.getElementById('new-adm-user').value.trim();
+    const new_pass = document.getElementById('new-adm-pass').value;
+    const role = document.getElementById('new-adm-role').value;
+    const msgEl = document.getElementById('add-adm-msg');
+    if (!new_user || !new_pass) return;
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'admin_add_user',
+        auth_user: currentAdminUser,
+        auth_pass: currentAdminPass,
+        new_user, new_pass, role
+      })
+    });
+    const data = await res.json();
+    msgEl.textContent = data.ok ? `Account "${new_user}" (${role}) created!` : 'Error creating account.';
+  }
+
+  loadPublicData();
+</script>
+</body>
+</html>
